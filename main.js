@@ -1,4 +1,5 @@
 const dictionary = ['earth', 'plane', 'crane', 'audio', 'steam']
+let gameComplete = false
 
 const state = {
     secret: dictionary[Math.floor(Math.random() * dictionary.length)],
@@ -8,12 +9,18 @@ const state = {
 };
 
 function updateGrid(){
+    console.log(gameComplete)
+    if (gameComplete == true){
+        return;
+    }else {
     for (let i = 0; i < state.grid.length; i++){
         for (let j=0; j < state.grid[i].length; j++){
             const box = document.getElementById(`box${i}${j}`)
+            
             box.textContent = state.grid[i][j];
         };
     };
+};
 };
 
 function drawBox(container, row, col, letter=''){
@@ -46,13 +53,13 @@ function drawGrid(container){
 function registerKeyboardEvents(){
     document.body.onkeydown = (e) => {
         const key = e.key
-        //console.log(key)
+        
         if (key === 'Enter') {
             const word = getCurrentWord();
-            console.log(word)
+
             if (state.currentCol === 5){
                 const word = getCurrentWord();
-                //console.log(word)
+                
                 if (isWordValid(word)){
                     revealWord(word);
                     state.currentRow++;
@@ -63,12 +70,11 @@ function registerKeyboardEvents(){
             }
         }
         if (key === 'Backspace'){
-            const word = getCurrentWord();
-            console.log(word)
+            const word = getCurrentWord();            
             removeLetter();
         }
         if (isLetter(key)){
-            //console.log(key)
+            
             addLetter(key);
         }
 
@@ -104,9 +110,12 @@ function revealWord(guess){
     const isGameOver = state.currentRow === 5;
 
     if (isWinner) {
-        alert('Congratulations!');
-        
+
+        gameComplete = true;
+        //alert('Congratulations!');
+
     } else if (isGameOver){
+        gameComplete = true;
         alert(`Better luck next time! The word was ${state.secret}.`)
     }
     
@@ -124,7 +133,7 @@ function addLetter(letter) {
 
 function removeLetter(){
     if (state.currentCol === 0) return;
-    state.grid[state.currentRow][state.currentCol] = ' ';
+    state.grid[state.currentRow][state.currentCol - 1] = '';
     state.currentCol--;
 }
 function startup(){
