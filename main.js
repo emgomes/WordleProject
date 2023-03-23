@@ -1,7 +1,10 @@
 const dictionary = ['earth', 'plane', 'crane', 'audio', 'steam']
+const dictionaryThree = ['cat', 'hat', 'bat', 'rat', 'fat']
+
 let gameComplete = false
-let colAmt = document.getElementById("colAmt").value;
-let rowAmt = document.getElementById("rowAmt").value;
+let colAmt = parseInt(document.getElementById("colAmt").value);
+let rowAmt = parseInt(document.getElementById("rowAmt").value);
+
 
 const state = {
     
@@ -12,13 +15,22 @@ const state = {
     currentCol: 0
 };
 
-console.log(`initial state.grid ${state.grid[0][0]}`)
+//console.log(`initial state.grid ${state.grid[0][0]}`)
 
 function clearGrid(){
     document.getElementById("game").innerHTML = "";
+    state.grid = Array(rowAmt).fill().map(() => Array(colAmt).fill(''))
+    state.currentRow = 0,
+    state.currentCol = 0;
+
+    
 }
 
 function updateGridSize(){
+    if (document.getElementById("colAmt").value != colAmt) {
+        state.secret = dictionaryThree[Math.floor(Math.random() * dictionaryThree.length)];
+        console.log(state.secret)
+    }
     colAmt = document.getElementById("colAmt").value;
     rowAmt = document.getElementById("rowAmt").value;
     
@@ -174,13 +186,15 @@ function isLetter(key){
 }
 
 function addLetter(letter) {
-    if (state.currentCol === colAmt) return;
+    if (state.currentCol == colAmt) return;
     //console.log("intersection: " + `${state.currentRow}${state.currentCol}`)
     // console.log("intersection val: " + state.grid[state.currentRow][state.currentCol])
     // console.log("letter: " + letter)
     console.log(`state.currentRow: ${state.currentRow}`)
     console.log(`state.currentCol: ${state.currentCol}`)
+    console.log(`state val: ${state.grid[state.currentRow][state.currentCol]}`)
     state.grid[state.currentRow][state.currentCol] = letter;
+    
     //console.log(`${state.currentRow}${state.currentCol}`)
     
     state.currentCol++;
@@ -188,7 +202,7 @@ function addLetter(letter) {
 
 function removeLetter(){
     if (state.currentCol === 0) return;    
-    state.grid[state.currentRow][state.currentCol - 1] = '';
+    state.grid[state.currentRow][state.currentCol-1] = '';
     state.currentCol--;
 }
 function startup(){
