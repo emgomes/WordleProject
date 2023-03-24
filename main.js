@@ -1,3 +1,6 @@
+//import {testWord} from './wordApi'
+//console.log(testWord)
+
 const dictionary = ['earth', 'plane', 'crane', 'audio', 'steam']
 const dictionaryThree = ['cat', 'hat', 'bat', 'rat', 'fat']
 
@@ -9,13 +12,17 @@ let rowAmt = parseInt(document.getElementById("rowAmt").value);
 const state = {
     
     secret: dictionary[Math.floor(Math.random() * dictionary.length)],
-    // grid: Array(6).fill().map(() => Array(5).fill('')),
     grid: Array(rowAmt).fill().map(() => Array(colAmt).fill('')),
     currentRow: 0,
     currentCol: 0
 };
 
-//console.log(`initial state.grid ${state.grid[0][0]}`)
+async function generateSecretWord(){
+    const resTest = await fetch('https://api.datamuse.com/words?sp=?????&max=100')
+    let objTest = await resTest.json();
+
+    document.getElementById('selectors').setAttribute("wordChoice", JSON.parse(JSON.stringify(objTest))[Math.floor(Math.random() * 100)].word);
+}
 
 function clearGrid(){
     document.getElementById("game").innerHTML = "";
@@ -43,7 +50,7 @@ function updateGridSize(){
 
     const game = document.getElementById('game');
 
-    
+    generateSecretWord()
     clearGrid();
     drawGrid(game);
 }
@@ -103,11 +110,8 @@ function registerKeyboardEvents(){
         rowAmt = document.getElementById("rowAmt").value;
 
         const key = e.key
-        //console.log(key)
-        if (key === 'Enter') {  
 
-            
-            //changing 5 to colAmt
+        if (key === 'Enter') {  
             if (state.currentCol == colAmt){
                 const word = getCurrentWord();
                 console.log("here")
@@ -115,8 +119,6 @@ function registerKeyboardEvents(){
                     revealWord(word);
                     state.currentRow++;
                     state.currentCol = 0;
-                    
-
                 } else{
                     alert("Not a real word")
                 }
@@ -125,8 +127,7 @@ function registerKeyboardEvents(){
         if (key === 'Backspace'){          
             removeLetter();
         }
-        if (isLetter(key)){
-            //console.log(`${state.currentRow}${state.currentCol}`)
+        if (isLetter(key)){        
             addLetter(key);
         }
 
@@ -163,8 +164,6 @@ function revealWord(guess){
         }
     }
     const isWinner = state.secret === guess;
-
-    //changing 5 to colAmt
     
     const isGameOver = state.currentRow === rowAmt;
 
@@ -187,16 +186,8 @@ function isLetter(key){
 
 function addLetter(letter) {
     if (state.currentCol == colAmt) return;
-    //console.log("intersection: " + `${state.currentRow}${state.currentCol}`)
-    // console.log("intersection val: " + state.grid[state.currentRow][state.currentCol])
-    // console.log("letter: " + letter)
-    console.log(`state.currentRow: ${state.currentRow}`)
-    console.log(`state.currentCol: ${state.currentCol}`)
-    console.log(`state val: ${state.grid[state.currentRow][state.currentCol]}`)
+
     state.grid[state.currentRow][state.currentCol] = letter;
-    
-    //console.log(`${state.currentRow}${state.currentCol}`)
-    
     state.currentCol++;
 }
 
@@ -206,6 +197,7 @@ function removeLetter(){
     state.currentCol--;
 }
 function startup(){
+    generateSecretWord()
     const game = document.getElementById('game');
     drawGrid(game)
 
